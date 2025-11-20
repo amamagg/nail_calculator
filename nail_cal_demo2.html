@@ -194,7 +194,16 @@
 	    <input type="checkbox" id="凝膠_貓眼" data-price="1500">
             <label for="凝膠_貓眼">貓眼</label>
             <span class="價格">1500 元</span>          
-        </div>            
+        </div>    
+        <div class="服務項目">            
+            <input type="checkbox" id="浮動跳色" data-price="100"> <!-- 浮動項目 -->
+            <label for="浮動跳色">跳色</label>
+			<div class="浮動項目">
+               <input type="number" id="浮動跳色_數量" value="1" min="1" max="10">
+            <span class="價格">x100 元/色</span>
+			</div>
+		</div>
+                
              
         <h3>卸甲</h3>
 		<div class="服務項目">
@@ -206,7 +215,15 @@
             <input type="checkbox" id="卸甲_本店不續" data-price="300">
             <label for="卸甲_本店不續">本店卸甲不續做</label>
             <span class="價格">300 元</span>
-        </div>                      
+        </div> 
+        <div class="服務項目">            
+            <input type="checkbox" id="浮動卸甲" data-price="20"> <!-- 浮動項目 -->
+            <label for="浮動卸甲">卸甲</label>
+			<div class="浮動項目">
+               <input type="number" id="浮動卸甲_數量" value="1" min="1" max="5">
+            <span class="價格">x20 元/隻</span>
+			</div>
+		</div>                     
 
         <h3>保養</h3>
         <div class="服務項目">
@@ -262,7 +279,22 @@
                     else if (checkbox.id.startsWith('保養_')) {
                         明細類別['保養'].push({ label:項目名稱, price: 項目金額 });                   
                         總金額 += 項目金額;	
-                    }                   
+                    }     
+                    //2. 處理浮動項目
+                    //跳色
+                    else if( checkbox.id ==('浮動跳色')){                     
+                        const 數量 = parseInt(document.getElementById('浮動跳色_數量').value) || 1;     
+                        const 金額 = 項目金額 * 數量;                        
+                        明細類別['凝膠'].push({ label: `${項目名稱} x ${數量}`, price: 金額 });
+                        總金額 += 金額;
+                    } 
+                    //卸甲
+                    else if( checkbox.id ==('浮動卸甲')){                     
+                        const 數量 = parseInt(document.getElementById('浮動卸甲_數量').value) || 1;     
+                        const 金額 = 項目金額 * 數量;                        
+                        明細類別['卸甲'].push({ label: `${項目名稱} x ${數量}`, price: 金額 });
+                        總金額 += 金額;
+                    }               
                 }
             });   
             
