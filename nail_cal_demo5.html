@@ -259,7 +259,7 @@
             <input type="checkbox" id="折價券"> <!-- 活動項目 -->
             <label for="折價券">折價券</label>
              <input type="number" id="折價券金額" value="100">             
-		</div>
+		</div>       
 
         <button id="加總按鈕" onclick="功能_計算總額()">計算總額</button>
 
@@ -278,13 +278,15 @@
             const 總金額區 = document.getElementById('總金額');
             let 總金額 = 0;
             let 明細內容 = '';
+            let 商品總金額 = 0;
             
             const 明細類別 = {
                 '凝膠': [],
                 '自訂': [],
                 '卸甲': [],
                 '保養': [],
-                '折扣': []
+                '折扣': [],
+                '商品(不參與折扣)':[]
             };
 
             const 勾選項目 = document.querySelectorAll('input[type="checkbox"]');
@@ -331,12 +333,25 @@
                 const 自訂項目單價 = parseFloat(item.querySelector('.自訂項目_單價').value);
                 const 自訂項目數量 = parseInt(item.querySelector('.自訂項目_數量').value)|| 1;
                 const 自訂項目金額 = parseFloat(item.querySelector('.自訂項目_金額').value);
-                if (自訂項目數量>1)
-                明細類別['自訂'].push({ label: `${自訂項目名稱} (${自訂項目單價} x ${自訂項目數量})`, price: 自訂項目金額 });                
+               
+                if(自訂項目名稱.includes('商品')) //不參與折扣的自訂商品
+                {
+                    if (自訂項目數量>1)                
+                    明細類別['商品(不參與折扣)'].push({ label: `${自訂項目名稱} (${自訂項目單價} x ${自訂項目數量})`, price: 自訂項目金額 });                
+                    else                
+                    明細類別['商品(不參與折扣)'].push({ label: 自訂項目名稱, price: 自訂項目金額 });
+                
+                    商品總金額 += 自訂項目金額;
+                }
                 else
-                明細類別['自訂'].push({ label: 自訂項目名稱, price: 自訂項目金額 });
-
-                總金額 += 自訂項目金額;
+                {                     
+                    if (自訂項目數量>1)                
+                    明細類別['自訂'].push({ label: `${自訂項目名稱} (${自訂項目單價} x ${自訂項目數量})`, price: 自訂項目金額 });                
+                    else                
+                    明細類別['自訂'].push({ label: 自訂項目名稱, price: 自訂項目金額 });
+                
+                    總金額 += 自訂項目金額;
+                }
             });
             			
             // 4. 折扣(需要設立條件)        
@@ -357,6 +372,7 @@
                 總金額 *= 折扣_折數;
             }
 					
+            總金額 += 商品總金額; //購買商品(商品不參與折扣)       
            
             // 根據分類生成收據內容
             for (const category in 明細類別) {
